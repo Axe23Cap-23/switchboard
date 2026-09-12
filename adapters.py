@@ -1,12 +1,5 @@
 """
 API adapters for each bot type.
-
-Each function takes a prompt (and optional system prompt) and returns the
-model's plain-text response. Set your API keys as environment variables
-before running the server:
-
-    export ANTHROPIC_API_KEY=sk-ant-...
-    export XAI_API_KEY=xai-...
 """
 import os
 import httpx
@@ -34,7 +27,9 @@ async def call_claude(prompt: str, system: str = "", model: str = "claude-sonnet
 
     async with httpx.AsyncClient(timeout=60) as client:
         resp = await client.post(ANTHROPIC_URL, headers=headers, json=payload)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            print(f"ANTHROPIC ERROR {resp.status_code}: {resp.text}", flush=True)
+            resp.raise_for_status()
         data = resp.json()
         return "".join(block.get("text", "") for block in data.get("content", []))
 
@@ -50,8 +45,12 @@ async def call_grok(prompt: str, system: str = "", model: str = "grok-4.6") -> s
     messages.append({"role": "user", "content": prompt})
     payload = {"model": model, "messages": messages}
 
+    print(f"XAI REQUEST: key_present={bool(XAI_API_KEY)} model={model}", flush=True)
+
     async with httpx.AsyncClient(timeout=60) as client:
         resp = await client.post(XAI_URL, headers=headers, json=payload)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            print(f"XAI ERROR {resp.status_code}: {resp.text}", flush=True)
+            resp.raise_for_status()
         data = resp.json()
         return data["choices"][0]["message"]["content"]
