@@ -10,7 +10,7 @@ from mcp.server.fastmcp import FastMCP
 
 import core
 
-mcp = FastMCP("switchboard", stateless_http=True)
+mcp = FastMCP("switchboard", stateless_http=True, streamable_http_path="/")
 
 
 @mcp.tool()
