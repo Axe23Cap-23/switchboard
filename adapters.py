@@ -39,7 +39,7 @@ async def call_claude(prompt: str, system: str = "", model: str = "claude-sonnet
         return "".join(block.get("text", "") for block in data.get("content", []))
 
 
-async def call_grok(prompt: str, system: str = "", model: str = "grok-4") -> str:
+async def call_grok(prompt: str, system: str = "", model: str = "grok-4.6") -> str:
     headers = {
         "Authorization": f"Bearer {XAI_API_KEY}",
         "content-type": "application/json",
