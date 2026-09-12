@@ -10,6 +10,8 @@ Run with:
     export XAI_API_KEY=...
     uvicorn app:app --reload --port 8000
 """
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
@@ -17,7 +19,16 @@ from pydantic import BaseModel
 import core
 from mcp_server import mcp
 
-app = FastAPI(title="ChatGPT / Claude / Grok switchboard")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # The MCP session manager needs to run inside the app's startup/shutdown
+    # lifecycle, or it raises "Task group is not initialized" on every request.
+    async with mcp.session_manager.run():
+        yield
+
+
+app = FastAPI(title="ChatGPT / Claude / Grok switchboard", lifespan=lifespan)
 
 # Mount the MCP connector ChatGPT's Plugins/Connectors will talk to
 app.mount("/mcp", mcp.streamable_http_app())
