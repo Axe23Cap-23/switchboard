@@ -7,10 +7,16 @@ It exposes one tool, send_message, that routes to claude_bot or grok_bot_a
 using the exact same logic as the REST API in app.py.
 """
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 import core
 
-mcp = FastMCP("switchboard", stateless_http=True, streamable_http_path="/")
+mcp = FastMCP(
+    "switchboard",
+    stateless_http=True,
+    streamable_http_path="/",
+    transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
+)
 
 
 @mcp.tool()
