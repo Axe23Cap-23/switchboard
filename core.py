@@ -20,13 +20,13 @@ BOTS = {
     "claude_bot": {"kind": "claude", "model": "claude-sonnet-4-6"},
     "grok_bot_a": {
         "kind": "grok",
-        "model": "grok-4",
+        "model": "grok-4.6",
         "role": "dispatcher",
         "children": ["grok_bot_b", "grok_bot_c", "grok_bot_d"],
     },
-    "grok_bot_b": {"kind": "grok", "model": "grok-4", "role": "worker"},
-    "grok_bot_c": {"kind": "grok", "model": "grok-4", "role": "worker"},
-    "grok_bot_d": {"kind": "grok", "model": "grok-4", "role": "worker"},
+    "grok_bot_b": {"kind": "grok", "model": "grok-4.6", "role": "worker"},
+    "grok_bot_c": {"kind": "grok", "model": "grok-4.6", "role": "worker"},
+    "grok_bot_d": {"kind": "grok", "model": "grok-4.6", "role": "worker"},
 }
 
 MAX_DELEGATION_DEPTH = 1
@@ -147,3 +147,4 @@ async def handle_message(to: str, content: str) -> dict:
     await handler(task_id, content)
     task = TASKS[task_id]
     return {"task_id": task_id, "status": task["status"], "result": task["output"]}
+
